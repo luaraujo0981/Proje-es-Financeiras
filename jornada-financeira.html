@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada Financeira 360° - IPPLA</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4f46e5; /* Indigo 600 */
+            --primary-light: #e0e7ff; /* Indigo 100 */
+            --primary-dark: #3730a3; /* Indigo 800 */
+            --text-color: #1f2937; /* Gray 800 */
+            --text-light: #6b7280; /* Gray 500 */
+            --bg-color: #f9fafb; /* Gray 50 */
+            --white: #ffffff;
+            --border-color: #e5e7eb; /* Gray 200 */
+            --success-color: #4CAF50; /* Verde */
+            --warning-color: #FFEB3B; /* Amarelo */
+            --danger-color: #F44336; /* Vermelho */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+
+        .logo {
+            max-width: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .header-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+        }
+
+        input[type="number"], 
+        input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-full {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-outline {
+            background-color: var(--white);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-active {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .results {
+            margin-top: 2rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .result-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .result-card {
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .result-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .result-info {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis {
+            background-color: var(--primary-light);
+            border: 1px solid var(--primary-color);
+            border-radius: 0.25rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .analysis-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .analysis-content {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .strategies {
+            margin-top: 1rem;
+        }
+
+        .strategies-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .strategies-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+            .print-only {
+                display: block;
+            }
+            body {
+                background-color: white;
+            }
+            .container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://github.com/luaraujo0981/IMAGENS/blob/main/LOGO%20IPPLA%20SEM%20NOME.png?raw=true" alt="IPPLA Logo" class="logo">
+            <h1 class="header-title">Jornada Financeira 360°</h1>
+            <p class="header-subtitle">Mapeamento de Liberdade e Bem-estar Financeiro</p>
+        </header>
+
+        <div class="grid">
+            <!-- Coluna de dados pessoais -->
+            <div class="card">
+                <h2 class="card-title">Dados Pessoais</h2>
+                
+                <div class="form-group">
+                    <label for="idade">Idade Atual</label>
+                    <input type="number" id="idade" value="30">
+                </div>
+                
+                <div class="form-group">
+                    <label for="expectativaVida">Expectativa de Vida</label>
+                    <input type="number" id="expectativaVida" value="85">
+                </div>
+                
+                <div class="form-group">
+                    <label for="rendaMensal">Renda Mensal Atual (R$)</label>
+                    <input type="number" id="rendaMensal" value="5000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patrimonioFinanceiro">Patrimônio Financeiro Atual (R$)</label>
+                    <input type="number" id="patrimonioFinanceiro" value="100000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patrimonioImoveis">Patrimônio em Imóveis Atual (R$)</label>
+                    <input type="number" id="patrimonioImoveis" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="aporteRecorrente">Aporte Mensal (R$)</label>
+                    <input type="number" id="aporteRecorrente" value="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="idadeMeta">Idade Meta para Independência</label>
+                    <input type="number" id="idadeMeta" value="65">
+                </div>
+            </div>
+            
+            <!-- Coluna de cenários econômicos -->
+            <div class="card">
+                <h2 class="card-title">Horizontes Possíveis</h2>
+                
+                <div class="form-group">
+                    <label>Cenário</label>
+                    <div class="btn-group">
+                        <button id="cenarioBase" class="btn btn-small btn-active">Base</button>
+                        <button id="cenarioOtimista" class="btn btn-small btn-outline">Otimista</button>
+                        <button id="cenarioPessimista" class="btn btn-small btn-outline">Desafiador</button>
+                        <button id="cenarioPersonalizado" class="btn btn-small btn-outline">Personal.</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="retornoInvestimento">Retorno de Investimentos Financeiros (% a.a.)</label>
+                    <input type="number" id="retornoInvestimento" step="0.1" value="6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="retornoImoveis">Valorização de Imóveis (% a.a.)</label>
+                    <input type="number" id="retornoImoveis" step="0.1" value="3">
+                </div>
+                
+                <div class="form-group">
+                    <label for="inflacao">Inflação Projetada (% a.a.)</label>
+                    <input type="number" id="inflacao" step="0.1" value="4">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nivelEstiloVida">Nível de Estilo de Vida (%)</label>
+                    <input type="number" id="nivelEstiloVida" step="1" value="80">
+                </div>
+                
+                <button id="salvarCenario" class="btn btn-full">Salvar Cenário Personalizado</button>
+            </div>
+            
+            <!-- Coluna de perfil emocional -->
+            <div class="card">
+                <h2 class="card-title">Mindset Financeiro</h2>
+                
+                <div class="form-group">
+                    <label for="confortoDecisoes">Conforto com Decisões Financeiras (1-10)</label>
+                    <input type="range" id="confortoDecisoes" min="1" max="10" value="5">
+                    <div class="range-labels">
+                        <span>Baixo</span>
+                        <span>Alto</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="importanciaSeguranca">Importância da Tranquilidade Financeira (1-10)</label>
+                    <input type="range" id="importanciaSeguranca" min="1" max="10" value="5">
+                    <div class="range-labels">
+                        <span>Baixa</span>
+                        <span>Alta</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="toleranciaRisco">Tolerância a Riscos Financeiros (1-10)</label>
+                    <input type="range" id="toleranciaRisco" min="1" max="10" value="5">
+                    <div class="range-labels">
+                        <span>Baixa</span>
+                        <span>Alta</span>
+                    </div>
+                </div>
+                
+                <button id="analisarMindset" class="btn btn-full">Analisar Mindset Financeiro</button>
+            </div>
+        </div>
+        
+        <!-- Seção de resultados -->
+        <div class="card results">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 class="card-title">Mapa de Liberdade Financeira</h2>
+                <button id="exportarPDF" class="btn">Exportar PDF</button>
+            </div>
+            
+            <div class="result-grid">
+                <div class="result-card">
+                    <h3 class="result-title">Renda na Independência</h3>
+                    <p class="result-value" id="rendaIndependenciaValor">R$ 0,00</p>
+                    <p class="result-info" id="rendaIndependenciaInfo">por mês (80% da renda atual)</p>
+                </div>
+                
+                <div class="result-card">
+                    <h3 class="result-title">Horizonte de Segurança</h3>
+                    <p class="result-value" id="horizonteSegurancaValor">0 anos</p>
+                    <p class="result-info" id="horizonteSegurancaInfo">dos 0 anos de independência</p>
+                </div>
+                
+                <div class="result-card" id="scoreCardBorder">
+                    <h3 class="result-title">Score de Liberdade</h3>
+                    <p class="result-value" id="scoreLiberdadeValor" style="color: #4CAF50;">0%</p>
+                    <p class="result-info">Cobertura da jornada de independência</p>
+                </div>
+            </div>
+            
+            <!-- Gráfico de projeção -->
+            <div class="chart-container">
+                <canvas id="projecaoChart"></canvas>
+            </div>
+            
+            <!-- Resultado emocional (inicialmente oculto) -->
+            <div id="resultadoEmocional" style="display: none;" class="analysis">
+                <h3 class="analysis-title">Análise de Bem-estar Financeiro</h3>
+                <p id="analiseTexto" class="analysis-content"></p>
+                
+                <div id="estrategiasDiv" style="display: none;" class="strategies">
+                    <h4 class="strategies-title">Estratégias para impulsionar sua liberdade financeira:</h4>
+                    <ul id="estrategiasList" class="strategies-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 IPPLA - Instituto de Psicologia e Planejamento Financeiro. Todos os direitos reservados.</p>
+        </div>
+    </div>
+
+    <script>
+        // Estado global da aplicação
+        const estado = {
+            // Dados pessoais
+            idade: 30,
+            expectativaVida: 85,
+            rendaMensal: 5000,
+            patrimonioFinanceiro: 100000,
+            patrimonioImoveis: 0,
+            aporteRecorrente: 1000,
+            idadeMeta: 65,
+            
+            // Variáveis econômicas
+            retornoInvestimento: 6,
+            retornoImoveis: 3,
+            inflacao: 4,
+            nivelEstiloVida: 80,
+            
+            // Fatores emocionais
+            confortoDecisoes: 5,
+            importanciaSeguranca: 5,
+            toleranciaRisco: 5,
+            
+            // Estado para cenários
+            cenarioAtual: 'base',
+            cenarios: {
+                base: {
+                    retornoInvestimento: 6,
+                    retornoImoveis: 3,
+                    inflacao: 4,
+                    nivelEstiloVida: 80
+                },
+                otimista: {
+                    retornoInvestimento: 8,
+                    retornoImoveis: 5,
+                    inflacao: 3,
+                    nivelEstiloVida: 80
+                },
+                pessimista: {
+                    retornoInvestimento: 4,
+                    retornoImoveis: 2,
+                    inflacao: 6,
+                    nivelEstiloVida: 80
+                },
+                personalizado: {
+                    retornoInvestimento: 6,
+                    retornoImoveis: 3,
+                    inflacao: 4,
+                    nivelEstiloVida: 80
+                }
+            },
+            
+            // Resultados da projeção
+            dadosProjecao: [],
+            scoreLiberdade: 0,
+            horizonteSeguranca: 0,
+            rendaIndependencia: 0
+        };
+        
+        // Referência ao gráfico
+        let projecaoChart = null;
+        
+        // Função para inicializar a aplicação
+        function inicializar() {
+            // Vincular elementos do DOM aos eventos
+            document.getElementById('idade').addEventListener('change', atualizarEstado);
+            document.getElementById('expectativaVida').addEventListener('change', atualizarEstado);
+            document.getElementById('rendaMensal').addEventListener('change', atualizarEstado);
+            document.getElementById('patrimonioFinanceiro').addEventListener('change', atualizarEstado);
+            document.getElementById('patrimonioImoveis').addEventListener('change', atualizarEstado);
+            document.getElementById('aporteRecorrente').addEventListener('change', atualizarEstado);
+            document.getElementById('idadeMeta').addEventListener('change', atualizarEstado);
+            
+            document.getElementById('retornoInvestimento').addEventListener('change', atualizarEstado);
+            document.getElementById('retornoImoveis').addEventListener('change', atualizarEstado);
+            document.getElementById('inflacao').addEventListener('change', atualizarEstado);
+            document.getElementById('nivelEstiloVida').addEventListener('change', atualizarEstado);
+            
+            document.getElementById('confortoDecisoes').addEventListener('input', atualizarEstado);
+            document.getElementById('importanciaSeguranca').addEventListener('input', atualizarEstado);
+            document.getElementById('toleranciaRisco').addEventListener('input', atualizarEstado);
+            
+            // Botões de cenário
+            document.getElementById('cenarioBase').addEventListener('click', () => aplicarCenario('base'));
+            document.getElementById('cenarioOtimista').addEventListener('click', () => aplicarCenario('otimista'));
+            document.getElementById('cenarioPessimista').addEventListener('click', () => aplicarCenario('pessimista'));
+            document.getElementById('cenarioPersonalizado').addEventListener('click', () => aplicarCenario('personalizado'));
+            
+            // Botões de ação
+            document.getElementById('salvarCenario').addEventListener('click', salvarCenario);
+            document.getElementById('analisarMindset').addEventListener('click', analisarPerfilEmocional);
+            document.getElementById('exportarPDF').addEventListener('click', exportarPDF);
+            
+            // Inicializar o gráfico
+            inicializarGrafico();
+            
+            // Calcular projeção inicial
+            calcularProjecao();
+        }
+        
+        // Função para atualizar o estado da aplicação com base nos inputs
+        function atualizarEstado(evento) {
+            const id = evento.target.id;
+            const valor = evento.target.type === 'number' ? parseFloat(evento.target.value) : parseInt(evento.target.value);
+            
+            estado[id] = valor;
+            
+            // Se for um campo econômico, atualizar o cenário personalizado
+            if (['retornoInvestimento', 'retornoImoveis', 'inflacao', 'nivelEstiloVida'].includes(id)) {
+                if (estado.cenarioAtual !== 'personalizado') {
+                    aplicarCenario('personalizado');
+                } else {
+                    estado.cenarios.personalizado[id] = valor;
+                }
+            }
+            
+            // Recalcular projeção
+            calcularProjecao();
+        }
+        
+        // Função para aplicar cenário
+        function aplicarCenario(cenario) {
+            // Atualizar botões
+            document.getElementById('cenarioBase').classList.remove('btn-active');
+            document.getElementById('cenarioBase').classList.add('btn-outline');
+            document.getElementById('cenarioOtimista').classList.remove('btn-active');
+            document.getElementById('cenarioOtimista').classList.add('btn-outline');
+            document.getElementById('cenarioPessimista').classList.remove('btn-active');
+            document.getElementById('cenarioPessimista').classList.add('btn-outline');
+            document.getElementById('cenarioPersonalizado').classList.remove('btn-active');
+            document.getElementById('cenarioPersonalizado').classList.add('btn-outline');
+            
+            document.getElementById('cenario' + cenario.charAt(0).toUpperCase() + cenario.slice(1)).classList.add('btn-active');
+            document.getElementById('cenario' + cenario.charAt(0).toUpperCase() + cenario.slice(1)).classList.remove('btn-outline');
+            
+            // Atualizar estado
+            estado.cenarioAtual = cenario;
+            
+            // Atualizar campos
+            document.getElementById('retornoInvestimento').value = estado.cenarios[cenario].retornoInvestimento;
+            document.getElementById('retornoImoveis').value = estado.cenarios[cenario].retornoImoveis;
+            document.getElementById('inflacao').value = estado.cenarios[cenario].inflacao;
+            document.getElementById('nivelEstiloVida').value = estado.cenarios[cenario].nivelEstiloVida;
+            
+            // Atualizar estado interno
+            estado.retornoInvestimento = estado.cenarios[cenario].retornoInvestimento;
+            estado.retornoImoveis = estado.cenarios[cenario].retornoImoveis;
+            estado.inflacao = estado.cenarios[cenario].inflacao;
+            estado.nivelEstiloVida = estado.cenarios[cenario].nivelEstiloVida;
+            
+            // Recalcular projeção
+            calcularProjecao();
+        }
+        
+        // Função para salvar cenário personalizado
+        function salvarCenario() {
+            estado.cenarios.personalizado = {
+                retornoInvestimento: estado.retornoInvestimento,
+                retornoImoveis: estado.retornoImoveis,
+                inflacao: estado.inflacao,
+                nivelEstiloVida: estado.nivelEstiloVida
+            };
+            
+            aplicarCenario('personalizado');
+            
+            // Alerta para o usuário
+            alert('Cenário personalizado salvo!');
+        }
+        
+        // Função para calcular projeção
+        function calcularProjecao() {
+            const anosAteMeta = estado.idadeMeta - estado.idade;
+            const anosEmIndependencia = estado.expectativaVida - estado.idadeMeta;
+            const retornoRealAnualFinanceiro = (1 + estado.retornoInvestimento / 100) / (1 + estado.inflacao / 100) - 1;
+            const retornoRealAnualImoveis = (1 + estado.retornoImoveis / 100) / (1 + estado.inflacao / 100) - 1;
+            
+            let patrimonioFinanceiroAcumulado = estado.patrimonioFinanceiro;
+            let patrimonioImoveisAcumulado = estado.patrimonioImoveis;
+            let patrimonioTotalAcumulado = patrimonioFinanceiroAcumulado + patrimonioImoveisAcumulado;
+            let projecao = [];
+            
+            // Fase de acumulação
+            for (let ano = 0; ano <= anosAteMeta; ano++) {
+                const idadeAtual = estado.idade + ano;
+                
+                // Atualiza patrimônio financeiro com retorno financeiro + aportes
+                patrimonioFinanceiroAcumulado = patrimonioFinanceiroAcumulado * (1 + retornoRealAnualFinanceiro) + (estado.aporteRecorrente * 12);
+                
+                // Atualiza patrimônio de imóveis com retorno de imóveis
+                patrimonioImoveisAcumulado = patrimonioImoveisAcumulado * (1 + retornoRealAnualImoveis);
+                
+                // Calcula patrimônio total
+                patrimonioTotalAcumulado = patrimonioFinanceiroAcumulado + patrimonioImoveisAcumulado;
+                
+                projecao.push({
+                    idade: idadeAtual,
+                    fase: 'Acumulação',
+                    patrimonio: patrimonioTotalAcumulado,
+                    patrimonioFinanceiro: patrimonioFinanceiroAcumulado,
+                    patrimonioImoveis: patrimonioImoveisAcumulado,
+                    renda: estado.rendaMensal
+                });
+            }
+            
+            // Calcular renda na independência financeira
+            const rendaIndependenciaMensal = (estado.rendaMensal * (estado.nivelEstiloVida / 100));
+            estado.rendaIndependencia = rendaIndependenciaMensal;
+            
+            // Fase de desacumulação
+            let anosComPatrimonio = 0;
+            for (let ano = 1; ano <= anosEmIndependencia; ano++) {
+                const idadeAtual = estado.idadeMeta + ano;
+                
+                // Imóveis continuam a se valorizar
+                patrimonioImoveisAcumulado = patrimonioImoveisAcumulado * (1 + retornoRealAnualImoveis);
+                
+                // Renda é retirada apenas do patrimônio financeiro
+                // Primeiro o retorno do patrimônio financeiro
+                patrimonioFinanceiroAcumulado = patrimonioFinanceiroAcumulado * (1 + retornoRealAnualFinanceiro);
+                
+                // Depois desconta a renda mensal
+                patrimonioFinanceiroAcumulado -= (rendaIndependenciaMensal * 12);
+                
+                // Se o patrimônio financeiro ficar negativo, começa a "consumir" os imóveis
+                if (patrimonioFinanceiroAcumulado < 0) {
+                    patrimonioImoveisAcumulado += patrimonioFinanceiroAcumulado;
+                    patrimonioFinanceiroAcumulado = 0;
+                }
+                
+                // Calcula patrimônio total
+                patrimonioTotalAcumulado = patrimonioFinanceiroAcumulado + patrimonioImoveisAcumulado;
+                
+                // Se ainda há patrimônio total positivo
+                if (patrimonioTotalAcumulado > 0) {
+                    anosComPatrimonio = ano;
+                }
+                
+                projecao.push({
+                    idade: idadeAtual,
+                    fase: 'Independência',
+                    patrimonio: Math.max(0, patrimonioTotalAcumulado),
+                    patrimonioFinanceiro: Math.max(0, patrimonioFinanceiroAcumulado),
+                    patrimonioImoveis: Math.max(0, patrimonioImoveisAcumulado),
+                    renda: rendaIndependenciaMensal
+                });
+            }
+            
+            // Calcula o score de liberdade e horizonte de segurança
+            const scoreLib = (anosComPatrimonio / anosEmIndependencia) * 100;
+            estado.scoreLiberdade = Math.min(100, scoreLib);
+            estado.horizonteSeguranca = anosComPatrimonio;
+            
+            // Atualiza dados de projeção
+            estado.dadosProjecao = projecao;
+            
+            // Atualizar interface
+            atualizarInterface();
+        }
+        
+        // Função para inicializar o gráfico
+        function inicializarGrafico() {
+            const ctx = document.getElementById('projecaoChart').getContext('2d');
+            
+            projecaoChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Patrimônio Financeiro',
+                            data: [],
+                            backgroundColor: 'rgba(130, 202, 157, 0.2)',
+                            borderColor: 'rgba(130, 202, 157, 1)',
+                            fill: true
+                        },
+                        {
+                            label: 'Patrimônio Imóveis',
+                            data: [],
+                            backgroundColor: 'rgba(136, 132, 216, 0.2)',
+                            borderColor: 'rgba(136, 132, 216, 1)',
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Idade'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Patrimônio (R$)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += 'R$ ' + context.parsed.y.toLocaleString('pt-BR');
+                                    return label;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                line1: {
+                                    type: 'line',
+                                    xMin: estado.idadeMeta,
+                                    xMax: estado.idadeMeta,
+                                    borderColor: 'rgba(255, 0, 0, 0.7)',
+                                    borderWidth: 2,
+                                    label: {
+                                        content: 'Independência',
+                                        enabled: true,
+                                        position: 'top'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para atualizar a interface
+        function atualizarInterface() {
+            // Atualizar indicadores
+            document.getElementById('rendaIndependenciaValor').textContent = 'R$ ' + estado.rendaIndependencia.toFixed(2);
+            document.getElementById('rendaIndependenciaInfo').textContent = `por mês (${estado.nivelEstiloVida}% da renda atual)`;
+            
+            document.getElementById('horizonteSegurancaValor').textContent = estado.horizonteSeguranca + ' anos';
+            document.getElementById('horizonteSegurancaInfo').textContent = `dos ${estado.expectativaVida - estado.idadeMeta} anos de independência`;
+            
+            document.getElementById('scoreLiberdadeValor').textContent = estado.scoreLiberdade.toFixed(0) + '%';
+            document.getElementById('scoreLiberdadeValor').style.color = mapearCorScore(estado.scoreLiberdade);
+            document.getElementById('scoreCardBorder').style.borderColor = mapearCorScore(estado.scoreLiberdade);
+            
+            // Atualizar gráfico
+            atualizarGrafico();
+        }
+        
+        // Função para atualizar o gráfico
+        function atualizarGrafico() {
+            // Preparar dados para o gráfico
+            const labels = estado.dadosProjecao.map(item => item.idade);
+            const dataFinanceiro = estado.dadosProjecao.map(item => item.patrimonioFinanceiro);
+            const dataImoveis = estado.dadosProjecao.map(item => item.patrimonioImoveis);
+            
+            // Atualizar dados do gráfico
+            projecaoChart.data.labels = labels;
+            projecaoChart.data.datasets[0].data = dataFinanceiro;
+            projecaoChart.data.datasets[1].data = dataImoveis;
+            
+            // Adicionar anotação para mostrar linha de independência
+            projecaoChart.options.plugins.annotation = {
+                annotations: {
+                    line1: {
+                        type: 'line',
+                        xMin: estado.idadeMeta,
+                        xMax: estado.idadeMeta,
+                        borderColor: 'rgba(255, 0, 0, 0.7)',
+                        borderWidth: 2,
+                        label: {
+                            content: 'Independência',
+                            enabled: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            };
+            
+            // Atualizar gráfico
+            projecaoChart.update();
+        }
+        
+        // Função para mapear score de liberdade para cor
+        function mapearCorScore(score) {
+            if (score >= 100) return '#4CAF50'; // Verde
+            if (score >= 80) return '#8BC34A'; // Verde claro
+            if (score >= 60) return '#FFEB3B'; // Amarelo
+            if (score >= 40) return '#FFC107'; // Âmbar
+            if (score >= 20) return '#FF9800'; // Laranja
+            return '#F44336'; // Vermelho
+        }
+        
+        // Função para analisar perfil emocional
+        function analisarPerfilEmocional() {
+            // Mostrar div de resultado
+            document.getElementById('resultadoEmocional').style.display = 'block';
+            
+            // Atualizar texto de análise
+            document.getElementById('analiseTexto').textContent = obterTextoAnaliseEmocional();
+            
+            // Exibir estratégias se o score for menor que 100
+            if (estado.scoreLiberdade < 100) {
+                document.getElementById('estrategiasDiv').style.display = 'block';
+                
+                // Limpar lista de estratégias
+                const estrategiasList = document.getElementById('estrategiasList');
+                estrategiasList.innerHTML = '';
+                
+                // Adicionar estratégias
+                const estrategias = [
+                    `Aumentar seu aporte mensal para R$ ${(estado.aporteRecorrente * 1.5).toFixed(2)} pode melhorar significativamente seu score de liberdade.`,
+                    `Revisar sua estratégia de investimentos para buscar um retorno real mais elevado, alinhado com seu perfil de tolerância a risco.`,
+                    `Considerar um nível de estilo de vida um pouco menor (entre 70-75%) pode fazer seu patrimônio durar por mais tempo.`
+                ];
+                
+                // Se idade meta for menor que 65, adicionar estratégia específica
+                if (estado.idadeMeta < 65) {
+                    estrategias.push(`Considerar estender sua fase de acumulação em alguns anos pode diminuir o período de desacumulação e aumentar seu patrimônio.`);
+                }
+                
+                // Adicionar estratégias à lista
+                estrategias.forEach(estrategia => {
+                    const li = document.createElement('li');
+                    li.textContent = estrategia;
+                    estrategiasList.appendChild(li);
+                });
+            } else {
+                document.getElementById('estrategiasDiv').style.display = 'none';
+            }
+        }
+        
+        // Texto de análise emocional
+        function obterTextoAnaliseEmocional() {
+            if (estado.scoreLiberdade >= 100) {
+                return `Seu plano financeiro proporciona uma forte tranquilidade mental. Com um Score de Liberdade de ${estado.scoreLiberdade.toFixed(0)}%, você tem recursos suficientes para toda a sua jornada de independência e possivelmente deixar um legado. Esta solidez ajuda a reduzir a tensão financeira e permite que você viva plenamente esta fase com serenidade.`;
+            } else if (estado.scoreLiberdade >= 80) {
+                return `Seu plano financeiro está bem estruturado, mas pode se beneficiar de alguns ajustes para maior tranquilidade. Com um Score de Liberdade de ${estado.scoreLiberdade.toFixed(0)}%, você tem cobertura para a maior parte da sua jornada de independência. Considerando seu perfil financeiro emocional, recomendamos considerar aumentar levemente seus aportes mensais para atingir 100% de cobertura.`;
+            } else if (estado.scoreLiberdade >= 60) {
+                return `Seu plano financeiro está no caminho certo, mas requer atenção. Com um Score de Liberdade de ${estado.scoreLiberdade.toFixed(0)}%, seus recursos podem ser insuficientes para toda a jornada de independência. Considerando seu mindset financeiro, este nível intermediário pode gerar alguma insegurança. Considere aumentar seus aportes recorrentes ou ajustar suas expectativas de estilo de vida.`;
+            } else if (estado.scoreLiberdade >= 40) {
+                return `Seu plano financeiro precisa de ajustes significativos. Com um Score de Liberdade de ${estado.scoreLiberdade.toFixed(0)}%, há um risco considerável de ficar sem recursos durante sua fase de independência. Para seu biótipo financeiro, esta situação pode gerar insegurança elevada. Recomendamos rever urgentemente sua estratégia de investimentos, possivelmente buscando orientação profissional.`;
+            } else {
+                return `Seu plano financeiro atual apresenta desafios substanciais. Com um Score de Liberdade de ${estado.scoreLiberdade.toFixed(0)}%, é provável que seu patrimônio seja insuficiente para financiar sua jornada de independência por muito tempo. Esta situação pode intensificar sentimentos de insegurança financeira. Recomendamos uma revisão completa de sua estratégia, incluindo aumentar significativamente seus aportes mensais, reconsiderar a idade de transição ou ajustar suas expectativas de estilo de vida.`;
+            }
+        }
+        
+        // Função para exportar como PDF
+        function exportarPDF() {
+            window.print();
+        }
+        
+        // Inicializar a aplicação quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', inicializar);
+    </script>
+</body>
+</html>
